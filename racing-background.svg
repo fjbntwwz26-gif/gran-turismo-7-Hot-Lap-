@@ -1,0 +1,48 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1">
+      <stop stop-color="#061126"/>
+      <stop offset="1" stop-color="#12385d"/>
+    </linearGradient>
+    <linearGradient id="road" x2="0" y2="1">
+      <stop stop-color="#17283e"/>
+      <stop offset="1" stop-color="#020610"/>
+    </linearGradient>
+    <linearGradient id="car" x2="0" y2="1">
+      <stop stop-color="#438cc5"/>
+      <stop offset="1" stop-color="#071526"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop stop-color="#168bff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#168bff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1200" cy="230" r="380" fill="url(#glow)"/>
+  <path d="M0 420 200 280 390 390 600 235 820 400 1040 250 1280 390 1450 285 1600 400V610H0Z" fill="#0a1b32"/>
+  <path d="M0 540 260 430 480 515 720 400 930 510 1170 415 1400 520 1600 440V700H0Z" fill="#102b47"/>
+  <path d="M0 630 450 565 740 590 1080 535 1600 610V900H0Z" fill="url(#road)"/>
+  <path d="M0 650 600 595 790 610 0 750Z" fill="#0875c9" opacity=".7"/>
+  <path d="M1600 655 1050 595 870 610 1600 760Z" fill="#147fe3" opacity=".7"/>
+  <path d="M790 615 810 615 1050 900 550 900Z" fill="#172d44"/>
+  <path d="M800 660 810 660 835 720 790 720Z" fill="#9fcfff" opacity=".8"/>
+  <path d="M780 760 805 760 825 810 750 810Z" fill="#9fcfff" opacity=".65"/>
+  <g fill="#d7eaff">
+    <circle cx="180" cy="435" r="5"/><circle cx="260" cy="415" r="4"/>
+    <circle cx="1330" cy="425" r="5"/><circle cx="1420" cy="410" r="4"/>
+    <circle cx="1050" cy="355" r="4"/><circle cx="570" cy="350" r="4"/>
+  </g>
+  <g fill="#1c8cff" opacity=".7">
+    <path d="M0 455H500L620 465H0Z"/>
+    <path d="M1040 460H1600V470H1000Z"/>
+  </g>
+  <ellipse cx="800" cy="750" rx="350" ry="100" fill="#01040b" opacity=".8"/>
+  <path d="M470 735 525 685 660 655 730 610 870 610 950 655 1075 680 1125 735 1090 785 500 785Z" fill="url(#car)" stroke="#438cc5" stroke-width="5"/>
+  <path d="M660 655 735 620 865 620 940 655 900 690 690 690Z" fill="#06101f" stroke="#6cbaff" stroke-width="4"/>
+  <path d="M510 720 610 700 660 720 650 742 510 752Z" fill="#ff344f"/>
+  <path d="M1090 720 990 700 940 720 950 742 1090 752Z" fill="#ff344f"/>
+  <path d="M520 765H1080" stroke="#8acbff" stroke-width="3" opacity=".65"/>
+  <path d="M0 840 450 800M1150 800 1600 840" stroke="#1679c8" stroke-width="4" opacity=".5"/>
+  <rect width="1600" height="900" fill="#020814" opacity=".28"/>
+</svg>
