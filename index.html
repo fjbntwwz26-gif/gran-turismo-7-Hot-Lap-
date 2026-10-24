@@ -6,14 +6,21 @@
 <title>GT7 Friends Leaderboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* Final cinematic theme overrides */
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #061126 !important;
+  background-color: #061126;
   background-image:
     linear-gradient(rgba(3, 10, 24, 0.25), rgba(3, 10, 24, 0.45)),
-    url("./IMG_0385.jpeg") !important;
+    url("./IMG_0385.jpeg");
   background-position: center top;
   background-size: 100% auto;
   background-repeat: no-repeat;
@@ -22,75 +29,194 @@ body {
   font-family: Arial, sans-serif;
 }
 
-header,
+header {
+  background: rgba(7, 19, 39, 0.25);
+  padding: 24px 18px;
+  border-bottom: 3px solid #168bff;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+main {
+  max-width: 1000px;
+  margin: auto;
+  padding: 16px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+header p {
+  color: #70bdff;
+  margin-bottom: 0;
+}
+
 .panel {
   background: rgba(7, 19, 39, 0.35);
+  padding: 18px;
+  border: 1px solid rgba(72, 155, 255, 0.45);
+  border-radius: 14px;
+  margin: 18px 0;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+input,
+select,
+button,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 7px;
+  border-radius: 8px;
+  border: 1px solid #465364;
+  background: rgba(7, 19, 38, 0.9);
+  color: #edf5ff;
+  font-size: 15px;
+}
+
+button {
+  cursor: pointer;
+  background: #168bff;
+  color: #ffffff;
+  font-weight: bold;
+  border: 0;
+}
+
+button.secondary {
+  background: #354b65;
+  color: white;
+}
+
+button.danger {
+  background: #a93636;
+  color: white;
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 11px 7px;
+  border-bottom: 1px solid rgba(112, 189, 255, 0.25);
+}
+
+th {
+  color: #70bdff;
+  font-size: 12px;
+}
+
+td {
+  font-size: 13px;
+}
+
+.muted {
+  color: #d0dbea;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  flex: 1;
+}
+
+.small {
+  width: auto;
+  padding: 8px 10px;
+  margin: 3px;
+  font-size: 12px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-card {
+  background: rgba(4, 13, 28, 0.55);
+  border: 1px solid rgba(72, 155, 255, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #d0dbea;
+  font-size: 12px;
+}
+
+/* Final override: keep the background visible through all panels */
+header,
+.panel {
+  background-color: rgba(7, 19, 39, 0.35) !important;
   border-color: rgba(72, 155, 255, 0.45);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
 }
 
 header {
+  background-color: rgba(7, 19, 39, 0.25) !important;
   border-bottom: 3px solid #168bff;
 }
 
-header p,
-th {
-  color: #70bdff;
-}
+@media (max-width: 600px) {
+  main {
+    padding: 10px;
+  }
 
-.admin-card {
-  background: rgba(4, 13, 28, 0.9);
-  border-color: rgba(72, 155, 255, 0.3);
-}
+  .panel {
+    padding: 13px;
+  }
 
-button {
-  background: #168bff;
-  color: #ffffff;
-}
+  .filters,
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
 
-button.secondary {
-  background: #354b65;
-}
+  th,
+  td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
 
-input,
-select,
-textarea {
-  background: #071326;
-  color: #edf5ff;
-}
-:root{color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;background:#10151d;color:#f4f6f8;font-family:Arial,sans-serif}
-header{background:#19222e;padding:24px 18px;border-bottom:3px solid #b6f542}
-main{max-width:1000px;margin:auto;padding:16px}
-h1{margin:0;font-size:25px}
-header p{color:#b6f542;margin-bottom:0}
-.panel{background:#19222e;padding:18px;border-radius:14px;margin:18px 0}
-.filters{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-label{display:block;font-size:14px;margin:10px 0}
-input,select,button,textarea{width:100%;padding:12px;margin-top:7px;border-radius:8px;border:1px solid #465364;background:#10151d;color:white;font-size:15px}
-button{cursor:pointer;background:#b6f542;color:#10151d;font-weight:bold;border:0}
-button.secondary{background:#35404d;color:white}
-button.danger{background:#a93636;color:white}
-button:disabled{opacity:.5}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th,td{text-align:left;padding:11px 7px;border-bottom:1px solid #35404d}
-th{color:#b6f542;font-size:12px}
-td{font-size:13px}
-.muted{color:#aab5c3;font-size:13px;line-height:1.5}
-.hidden{display:none!important}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.actions button{flex:1}
-.small{width:auto;padding:8px 10px;margin:3px;font-size:12px}
-.admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.admin-card{background:#10151d;border:1px solid #35404d;border-radius:10px;padding:12px}
-footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
-@media(max-width:600px){
- main{padding:10px}.panel{padding:13px}
- .filters,.admin-grid{grid-template-columns:1fr}
- th,td{padding:8px 4px;font-size:12px}
- h1{font-size:22px}
+  h1 {
+    font-size: 22px;
+  }
 }
 </style>
 </head>
@@ -179,7 +305,7 @@ footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
 </div>
 </div>
 
-<hr style="border-color:#35404d;margin:24px 0">
+<hr style="border-color:rgba(112,189,255,0.3);margin:24px 0">
 
 <h2 id="lapFormTitle">Add lap time</h2>
 <p class="muted">Enter the time as minutes:seconds.milliseconds, for example 1:45.250.</p>
