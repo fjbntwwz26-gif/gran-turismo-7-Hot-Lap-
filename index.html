@@ -20,21 +20,23 @@ input,select,button,textarea{width:100%;padding:12px;margin-top:7px;border-radiu
 button{cursor:pointer;background:#b6f542;color:#10151d;font-weight:bold;border:0}
 button.secondary{background:#35404d;color:white}
 button.danger{background:#a93636;color:white}
-button.small{width:auto;padding:8px 10px;margin:3px;font-size:12px}
+button:disabled{opacity:.5}
 table{width:100%;border-collapse:collapse;margin-top:12px}
-th,td{text-align:left;padding:12px 7px;border-bottom:1px solid #35404d}
+th,td{text-align:left;padding:11px 7px;border-bottom:1px solid #35404d}
 th{color:#b6f542;font-size:12px}
-td{font-size:14px}
+td{font-size:13px}
 .muted{color:#aab5c3;font-size:13px;line-height:1.5}
-#status,#loginStatus,#adminStatus{line-height:1.5;overflow-wrap:anywhere}
 .hidden{display:none!important}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .actions button{flex:1}
+.small{width:auto;padding:8px 10px;margin:3px;font-size:12px}
+.admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.admin-card{background:#10151d;border:1px solid #35404d;border-radius:10px;padding:12px}
 footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
-@media(max-width:520px){
+@media(max-width:600px){
  main{padding:10px}.panel{padding:13px}
- .filters{grid-template-columns:1fr}
- th,td{padding:9px 4px;font-size:12px}
+ .filters,.admin-grid{grid-template-columns:1fr}
+ th,td{padding:8px 4px;font-size:12px}
  h1{font-size:22px}
 }
 </style>
@@ -51,13 +53,13 @@ footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
 <p class="muted">Compare your fastest laps with your friends.</p>
 <div class="filters">
 <label>Track
-<select id="track"><option value="">All tracks</option></select>
+<select id="trackFilter"><option value="">All tracks</option></select>
 </label>
 <label>Car
-<select id="car"><option value="">All cars</option></select>
+<select id="carFilter"><option value="">All cars</option></select>
 </label>
 </div>
-<p id="status">Connecting to the leaderboard…</p>
+<p id="status" class="muted">Connecting…</p>
 <div style="overflow-x:auto">
 <table>
 <thead><tr><th>POS</th><th>DRIVER</th><th>CAR</th><th>LAP TIME</th></tr></thead>
@@ -68,19 +70,17 @@ footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
 
 <section class="panel">
 <h2>Admin login</h2>
-<p class="muted">Sign in with your approved administrator account to manage lap times.</p>
-
+<p class="muted">Sign in to manage drivers, cars, tracks, and lap times.</p>
 <div id="loginBox">
 <label>Email
-<input id="email" type="email" autocomplete="username" placeholder="Your admin email">
+<input id="email" type="email" autocomplete="username" placeholder="Admin email">
 </label>
 <label>Password
-<input id="password" type="password" autocomplete="current-password" placeholder="Your password">
+<input id="password" type="password" autocomplete="current-password" placeholder="Password">
 </label>
 <button id="loginButton">Sign in</button>
 <p id="loginStatus" class="muted"></p>
 </div>
-
 <div id="signedInBox" class="hidden">
 <p id="adminStatus" class="muted"></p>
 <button id="logoutButton" class="secondary">Sign out</button>
@@ -88,9 +88,48 @@ footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
 </section>
 
 <section id="adminPanel" class="panel hidden">
-<h2 id="formTitle">Add a lap time</h2>
-<p class="muted">Enter the lap time as minutes:seconds.milliseconds, for example 1:45.250.</p>
+<h2>Manage your racing club</h2>
+<p class="muted">Add drivers, cars and circuits here. They will then appear in the lap-time form.</p>
 
+<div class="admin-grid">
+<div class="admin-card">
+<h3>🏎️ Add driver</h3>
+<form id="driverForm">
+<label>Driver name
+<input id="driverName" maxlength="80" placeholder="e.g. Alex" required>
+</label>
+<button type="submit">Add driver</button>
+<p id="driverStatus" class="muted"></p>
+</form>
+</div>
+
+<div class="admin-card">
+<h3>🚘 Add car</h3>
+<form id="carForm">
+<label>Car name
+<input id="carName" maxlength="120" placeholder="e.g. Audi R8 LMS Evo '19" required>
+</label>
+<button type="submit">Add car</button>
+<p id="carStatus" class="muted"></p>
+</form>
+</div>
+
+<div class="admin-card">
+<h3>🏁 Add track</h3>
+<form id="trackForm">
+<label>Track name
+<input id="trackName" maxlength="120" placeholder="e.g. Dragon Trail" required>
+</label>
+<button type="submit">Add track</button>
+<p id="trackStatus" class="muted"></p>
+</form>
+</div>
+</div>
+
+<hr style="border-color:#35404d;margin:24px 0">
+
+<h2 id="lapFormTitle">Add lap time</h2>
+<p class="muted">Enter the time as minutes:seconds.milliseconds, for example 1:45.250.</p>
 <form id="lapForm">
 <label>Driver
 <select id="driverSelect" required></select>
@@ -102,20 +141,19 @@ footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
 <select id="carSelect" required></select>
 </label>
 <label>Lap time
-<input id="lapTime" type="text" placeholder="1:45.250" required>
+<input id="lapTime" placeholder="1:45.250" required>
 </label>
 <label>Notes (optional)
-<textarea id="notes" rows="2" placeholder="Optional notes about this lap"></textarea>
+<textarea id="notes" rows="2" placeholder="Optional notes"></textarea>
 </label>
 <div class="actions">
-<button id="saveButton" type="submit">Save lap time</button>
-<button id="cancelEdit" class="secondary hidden" type="button">Cancel edit</button>
+<button id="saveLapButton" type="submit">Save lap time</button>
+<button id="cancelEditButton" class="secondary hidden" type="button">Cancel edit</button>
 </div>
-<p id="formStatus" class="muted"></p>
+<p id="lapStatus" class="muted"></p>
 </form>
 
-<h2>Manage lap times</h2>
-<p class="muted">Edit or delete an existing entry below.</p>
+<h2>Existing lap times</h2>
 <div style="overflow-x:auto">
 <table>
 <thead><tr><th>DRIVER</th><th>TRACK</th><th>CAR</th><th>TIME</th><th>ACTIONS</th></tr></thead>
@@ -125,8 +163,8 @@ footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
 </section>
 
 <section class="panel">
-<h2>About the leaderboard</h2>
-<p class="muted">Lap times are ranked fastest first for the selected track and car. Keep racing, record your personal bests, and see how you compare with your friends!</p>
+<h2>About</h2>
+<p class="muted">An unofficial Gran Turismo 7 friends leaderboard. Lap times are ranked fastest first for the selected track and car.</p>
 </section>
 </main>
 
@@ -141,15 +179,19 @@ const client = window.supabase.createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
 
-let allLaps = [];
 let drivers = [];
-let tracks = [];
 let cars = [];
+let tracks = [];
+let allLaps = [];
 let isAdmin = false;
 let editingId = null;
 let busy = false;
 
 const $ = id => document.getElementById(id);
+
+function message(id, text) {
+  $(id).textContent = text;
+}
 
 function formatTime(ms) {
   const mins = Math.floor(ms / 60000);
@@ -160,18 +202,23 @@ function formatTime(ms) {
 function parseTime(value) {
   const match = value.trim().match(/^(\d+):([0-5]\d)\.(\d{1,3})$/);
   if (!match) return null;
-  const milliseconds = Number(match[3].padEnd(3, "0"));
-  return Number(match[1]) * 60000 + Number(match[2]) * 1000 + milliseconds;
+  return Number(match[1]) * 60000
+    + Number(match[2]) * 1000
+    + Number(match[3].padEnd(3, "0"));
 }
 
-function setOptions(id, items, firstLabel) {
+function findName(list, id) {
+  return list.find(item => String(item.id) === String(id))?.name || "Unknown";
+}
+
+function fillSelect(id, items, firstText) {
   const el = $(id);
   const previous = el.value;
   el.replaceChildren();
 
   const first = document.createElement("option");
   first.value = "";
-  first.textContent = firstLabel;
+  first.textContent = firstText;
   el.appendChild(first);
 
   items.forEach(item => {
@@ -181,22 +228,14 @@ function setOptions(id, items, firstLabel) {
     el.appendChild(option);
   });
 
-  if ([...el.options].some(o => o.value === previous)) {
+  if ([...el.options].some(option => option.value === previous)) {
     el.value = previous;
   }
 }
 
-function setMessage(id, message) {
-  $(id).textContent = message;
-}
-
-function getName(list, id) {
-  return list.find(item => String(item.id) === String(id))?.name || "Unknown";
-}
-
-function showLaps() {
-  const trackId = $("track").value;
-  const carId = $("car").value;
+function showLeaderboard() {
+  const trackId = $("trackFilter").value;
+  const carId = $("carFilter").value;
 
   const filtered = allLaps.filter(lap =>
     (!trackId || String(lap.track_id) === trackId) &&
@@ -207,28 +246,23 @@ function showLaps() {
   body.replaceChildren();
 
   if (!filtered.length) {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
+    const row = body.insertRow();
+    const cell = row.insertCell();
     cell.colSpan = 4;
-    cell.textContent = "No lap times yet. Add the first one when you're ready!";
-    row.appendChild(cell);
-    body.appendChild(row);
+    cell.textContent = "No lap times found for this selection.";
     return;
   }
 
   filtered.forEach((lap, index) => {
-    const row = document.createElement("tr");
+    const row = body.insertRow();
     [
       index + 1,
-      lap.drivers?.name || getName(drivers, lap.driver_id),
-      lap.cars?.name || getName(cars, lap.car_id),
+      lap.drivers?.name || findName(drivers, lap.driver_id),
+      lap.cars?.name || findName(cars, lap.car_id),
       formatTime(lap.lap_time_ms)
     ].forEach(value => {
-      const cell = document.createElement("td");
-      cell.textContent = value;
-      row.appendChild(cell);
+      row.insertCell().textContent = value;
     });
-    body.appendChild(row);
   });
 }
 
@@ -236,83 +270,71 @@ function showManageLaps() {
   const body = $("manageLaps");
   body.replaceChildren();
 
-  const sorted = [...allLaps].sort((a, b) => b.lap_time_ms - a.lap_time_ms);
-
-  if (!sorted.length) {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
+  if (!allLaps.length) {
+    const row = body.insertRow();
+    const cell = row.insertCell();
     cell.colSpan = 5;
-    cell.textContent = "No lap times to manage yet.";
-    row.appendChild(cell);
-    body.appendChild(row);
+    cell.textContent = "No lap times yet.";
     return;
   }
 
-  sorted.forEach(lap => {
-    const row = document.createElement("tr");
-    [
-      getName(drivers, lap.driver_id),
-      getName(tracks, lap.track_id),
-      getName(cars, lap.car_id),
-      formatTime(lap.lap_time_ms)
-    ].forEach(value => {
-      const cell = document.createElement("td");
-      cell.textContent = value;
-      row.appendChild(cell);
+  [...allLaps].sort((a, b) => b.lap_time_ms - a.lap_time_ms)
+    .forEach(lap => {
+      const row = body.insertRow();
+      [
+        findName(drivers, lap.driver_id),
+        findName(tracks, lap.track_id),
+        findName(cars, lap.car_id),
+        formatTime(lap.lap_time_ms)
+      ].forEach(value => row.insertCell().textContent = value);
+
+      const cell = row.insertCell();
+
+      const edit = document.createElement("button");
+      edit.className = "small";
+      edit.textContent = "Edit";
+      edit.addEventListener("click", () => startEdit(lap));
+
+      const del = document.createElement("button");
+      del.className = "small danger";
+      del.textContent = "Delete";
+      del.addEventListener("click", () => deleteLap(lap));
+
+      cell.append(edit, del);
     });
-
-    const actions = document.createElement("td");
-
-    const edit = document.createElement("button");
-    edit.className = "small";
-    edit.textContent = "Edit";
-    edit.addEventListener("click", () => startEdit(lap));
-
-    const del = document.createElement("button");
-    del.className = "small danger";
-    del.textContent = "Delete";
-    del.addEventListener("click", () => deleteLap(lap));
-
-    actions.append(edit, del);
-    row.appendChild(actions);
-    body.appendChild(row);
-  });
 }
 
-async function loadLeaderboard() {
-  setMessage("status", "Loading leaderboard…");
+async function loadData() {
+  message("status", "Loading leaderboard…");
 
-  const [trackResult, carResult, driverResult, lapResult] = await Promise.all([
-    client.from("tracks").select("id,name").order("name"),
-    client.from("cars").select("id,name").order("name"),
+  const results = await Promise.all([
     client.from("drivers").select("id,name").order("name"),
+    client.from("cars").select("id,name").order("name"),
+    client.from("tracks").select("id,name").order("name"),
     client.from("lap_times")
       .select("id,driver_id,track_id,car_id,lap_time_ms,recorded_at,notes,drivers(name),cars(name)")
   ]);
 
-  for (const result of [trackResult, carResult, driverResult, lapResult]) {
+  for (const result of results) {
     if (result.error) throw result.error;
   }
 
-  tracks = trackResult.data || [];
-  cars = carResult.data || [];
-  drivers = driverResult.data || [];
-  allLaps = lapResult.data || [];
+  drivers = results[0].data || [];
+  cars = results[1].data || [];
+  tracks = results[2].data || [];
+  allLaps = results[3].data || [];
 
-  setOptions("track", tracks, "All tracks");
-  setOptions("car", cars, "All cars");
-  setOptions("trackSelect", tracks, "Choose a track");
-  setOptions("carSelect", cars, "Choose a car");
-  setOptions("driverSelect", drivers, "Choose a driver");
+  fillSelect("driverSelect", drivers, "Choose a driver");
+  fillSelect("carSelect", cars, "Choose a car");
+  fillSelect("trackSelect", tracks, "Choose a track");
+  fillSelect("trackFilter", tracks, "All tracks");
+  fillSelect("carFilter", cars, "All cars");
 
-  showLaps();
+  showLeaderboard();
 
-  setMessage(
-    "status",
-    allLaps.length
-      ? allLaps.length + " lap time(s) loaded."
-      : "Connected successfully. No lap times have been added yet."
-  );
+  message("status", allLaps.length
+    ? allLaps.length + " lap time(s) loaded."
+    : "Connected. No lap times have been added yet.");
 
   if (isAdmin) showManageLaps();
 }
@@ -324,76 +346,67 @@ async function checkAdmin(session) {
   $("adminPanel").classList.add("hidden");
 
   if (!session) {
-    setMessage("loginStatus", "");
+    message("loginStatus", "");
     return;
   }
 
-  setMessage("adminStatus", "Checking administrator permissions…");
+  message("adminStatus", "Checking administrator access…");
 
   const { data, error } = await client.rpc("is_leaderboard_admin");
 
   if (error || data !== true) {
-    setMessage(
-      "adminStatus",
-      "Signed in, but this account is not approved to manage the leaderboard."
-    );
+    message("adminStatus",
+      "This account is not approved to manage the leaderboard.");
     return;
   }
 
   isAdmin = true;
   $("adminPanel").classList.remove("hidden");
-  setMessage("adminStatus", "Administrator access confirmed.");
+  message("adminStatus", "Administrator access confirmed.");
   showManageLaps();
 }
 
-function resetForm() {
-  editingId = null;
-  $("lapForm").reset();
-  $("formTitle").textContent = "Add a lap time";
-  $("saveButton").textContent = "Save lap time";
-  $("cancelEdit").classList.add("hidden");
-  setMessage("formStatus", "");
-}
-
-function startEdit(lap) {
-  if (!isAdmin) return;
-
-  editingId = lap.id;
-  $("driverSelect").value = String(lap.driver_id);
-  $("trackSelect").value = String(lap.track_id);
-  $("carSelect").value = String(lap.car_id);
-  $("lapTime").value = formatTime(lap.lap_time_ms);
-  $("notes").value = lap.notes || "";
-  $("formTitle").textContent = "Edit lap time";
-  $("saveButton").textContent = "Save changes";
-  $("cancelEdit").classList.remove("hidden");
-  setMessage("formStatus", "Editing the selected lap time.");
-  $("lapForm").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-async function deleteLap(lap) {
+async function addNamedItem(table, inputId, statusId, formId) {
   if (!isAdmin || busy) return;
 
-  const description = getName(drivers, lap.driver_id) + " — " +
-    formatTime(lap.lap_time_ms);
-
-  if (!confirm("Permanently delete this lap time?\n" + description)) return;
+  const name = $(inputId).value.trim();
+  if (!name) {
+    message(statusId, "Enter a name first.");
+    return;
+  }
 
   busy = true;
+  message(statusId, "Adding…");
+
   try {
-    const { error } = await client.from("lap_times").delete().eq("id", lap.id);
+    const { error } = await client.from(table).insert({ name });
     if (error) throw error;
 
-    if (String(editingId) === String(lap.id)) resetForm();
-    await loadLeaderboard();
-    setMessage("formStatus", "Lap time deleted.");
+    $(formId).reset();
+    await loadData();
+    message(statusId, "Added successfully!");
   } catch (error) {
     console.error(error);
-    setMessage("formStatus", "Could not delete this lap time: " + error.message);
+    message(statusId, "Could not add this item: " + error.message);
   } finally {
     busy = false;
   }
 }
+
+$("driverForm").addEventListener("submit", event => {
+  event.preventDefault();
+  addNamedItem("drivers", "driverName", "driverStatus", "driverForm");
+});
+
+$("carForm").addEventListener("submit", event => {
+  event.preventDefault();
+  addNamedItem("cars", "carName", "carStatus", "carForm");
+});
+
+$("trackForm").addEventListener("submit", event => {
+  event.preventDefault();
+  addNamedItem("tracks", "trackName", "trackStatus", "trackForm");
+});
 
 $("loginButton").addEventListener("click", async () => {
   if (busy) return;
@@ -402,22 +415,21 @@ $("loginButton").addEventListener("click", async () => {
   const password = $("password").value;
 
   if (!email || !password) {
-    setMessage("loginStatus", "Enter your email and password.");
+    message("loginStatus", "Enter your email and password.");
     return;
   }
 
   busy = true;
   $("loginButton").disabled = true;
-  setMessage("loginStatus", "Signing in…");
+  message("loginStatus", "Signing in…");
 
   try {
     const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw error;
-
     $("password").value = "";
-    setMessage("loginStatus", "Signed in successfully.");
+    message("loginStatus", "Signed in.");
   } catch (error) {
-    setMessage("loginStatus", "Sign-in failed. Check your email and password.");
+    message("loginStatus", "Sign-in failed. Check your email and password.");
   } finally {
     busy = false;
     $("loginButton").disabled = false;
@@ -426,17 +438,59 @@ $("loginButton").addEventListener("click", async () => {
 
 $("logoutButton").addEventListener("click", async () => {
   const { error } = await client.auth.signOut();
-  if (error) setMessage("adminStatus", "Sign-out failed: " + error.message);
-  else resetForm();
+  if (error) message("adminStatus", "Sign-out failed.");
+  resetLapForm();
 });
+
+function resetLapForm() {
+  editingId = null;
+  $("lapForm").reset();
+  $("lapFormTitle").textContent = "Add lap time";
+  $("saveLapButton").textContent = "Save lap time";
+  $("cancelEditButton").classList.add("hidden");
+  message("lapStatus", "");
+}
+
+function startEdit(lap) {
+  if (!isAdmin) return;
+  editingId = lap.id;
+  $("driverSelect").value = String(lap.driver_id);
+  $("trackSelect").value = String(lap.track_id);
+  $("carSelect").value = String(lap.car_id);
+  $("lapTime").value = formatTime(lap.lap_time_ms);
+  $("notes").value = lap.notes || "";
+  $("lapFormTitle").textContent = "Edit lap time";
+  $("saveLapButton").textContent = "Save changes";
+  $("cancelEditButton").classList.remove("hidden");
+  $("lapForm").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function deleteLap(lap) {
+  if (!isAdmin || busy) return;
+  if (!confirm("Permanently delete this lap time?")) return;
+
+  busy = true;
+  try {
+    const { error } = await client.from("lap_times")
+      .delete().eq("id", lap.id);
+    if (error) throw error;
+    if (String(editingId) === String(lap.id)) resetLapForm();
+    await loadData();
+    message("lapStatus", "Lap time deleted.");
+  } catch (error) {
+    message("lapStatus", "Delete failed: " + error.message);
+  } finally {
+    busy = false;
+  }
+}
 
 $("lapForm").addEventListener("submit", async event => {
   event.preventDefault();
   if (!isAdmin || busy) return;
 
-  const lapTime = parseTime($("lapTime").value);
-  if (lapTime === null || lapTime <= 0) {
-    setMessage("formStatus", "Use the format m:ss.mmm, for example 1:45.250.");
+  const ms = parseTime($("lapTime").value);
+  if (ms === null || ms <= 0) {
+    message("lapStatus", "Use m:ss.mmm, for example 1:45.250.");
     return;
   }
 
@@ -445,7 +499,7 @@ $("lapForm").addEventListener("submit", async event => {
   const carId = $("carSelect").value;
 
   if (!driverId || !trackId || !carId) {
-    setMessage("formStatus", "Choose a driver, track, and car.");
+    message("lapStatus", "Choose a driver, track, and car.");
     return;
   }
 
@@ -453,17 +507,16 @@ $("lapForm").addEventListener("submit", async event => {
     driver_id: Number(driverId),
     track_id: Number(trackId),
     car_id: Number(carId),
-    lap_time_ms: lapTime,
+    lap_time_ms: ms,
     notes: $("notes").value.trim() || null
   };
 
   busy = true;
-  $("saveButton").disabled = true;
-  setMessage("formStatus", editingId ? "Updating lap time…" : "Saving lap time…");
+  $("saveLapButton").disabled = true;
+  message("lapStatus", editingId === null ? "Saving…" : "Updating…");
 
   try {
     let result;
-
     if (editingId !== null) {
       result = await client.from("lap_times")
         .update(entry).eq("id", editingId);
@@ -473,44 +526,39 @@ $("lapForm").addEventListener("submit", async event => {
 
     if (result.error) throw result.error;
 
-    resetForm();
-    await loadLeaderboard();
-    setMessage("formStatus", "Lap time saved successfully!");
+    resetLapForm();
+    await loadData();
+    message("lapStatus", "Lap time saved successfully!");
   } catch (error) {
     console.error(error);
-    setMessage("formStatus", "Could not save the lap time: " + error.message);
+    message("lapStatus", "Could not save: " + error.message);
   } finally {
     busy = false;
-    $("saveButton").disabled = false;
+    $("saveLapButton").disabled = false;
   }
 });
 
-$("cancelEdit").addEventListener("click", resetForm);
-$("track").addEventListener("change", showLaps);
-$("car").addEventListener("change", showLaps);
+$("cancelEditButton").addEventListener("click", resetLapForm);
+$("trackFilter").addEventListener("change", showLeaderboard);
+$("carFilter").addEventListener("change", showLeaderboard);
 
 client.auth.onAuthStateChange((event, session) => {
-  if (event === "INITIAL_SESSION" || event === "SIGNED_IN" ||
-      event === "SIGNED_OUT" || event === "TOKEN_REFRESHED") {
-    setTimeout(async () => {
-      try {
-        await checkAdmin(session);
-      } catch (error) {
-        console.error(error);
-        setMessage("adminStatus", "Could not check administrator access.");
-      }
-    }, 0);
+  if (["INITIAL_SESSION", "SIGNED_IN", "SIGNED_OUT", "TOKEN_REFRESHED"].includes(event)) {
+    setTimeout(() => checkAdmin(session).catch(error => {
+      console.error(error);
+      message("adminStatus", "Could not check admin access.");
+    }), 0);
   }
 });
 
 (async function initialise() {
   try {
-    await loadLeaderboard();
+    await loadData();
     const { data } = await client.auth.getSession();
     await checkAdmin(data.session);
   } catch (error) {
     console.error(error);
-    setMessage("status", "Couldn't load the leaderboard. Please check the database connection and permissions.");
+    message("status", "Could not load the leaderboard. Check the database connection and permissions.");
   }
 })();
 </script>
