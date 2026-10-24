@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GT7 Friends Leaderboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#10151d;color:#f4f6f8;font-family:Arial,sans-serif}
+header{background:#19222e;padding:24px 18px;border-bottom:3px solid #b6f542}
+main{max-width:900px;margin:auto;padding:20px}
+h1{margin:0;font-size:25px}
+header p{color:#b6f542;margin-bottom:0}
+.panel{background:#19222e;padding:18px;border-radius:14px;margin:18px 0}
+select,button{padding:12px;border-radius:8px;border:1px solid #465364;background:#10151d;color:white;font-size:15px}
+select{width:100%;margin-top:8px}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{text-align:left;padding:12px 7px;border-bottom:1px solid #35404d}
+th{color:#b6f542;font-size:12px}
+td{font-size:14px}
+.muted{color:#aab5c3;font-size:13px}
+#status{line-height:1.5}
+footer{text-align:center;padding:20px;color:#aab5c3;font-size:12px}
+@media(max-width:520px){main{padding:12px}.filters{grid-template-columns:1fr}th,td{padding:10px 4px;font-size:12px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header>
+<h1>🏁 GT7 FRIENDS</h1>
+<p>YOUR PRIVATE RACING CLUB</p>
+</header>
+<main>
+<section class="panel">
+<h2>Leaderboard</h2>
+<p class="muted">Compare your fastest laps with your friends.</p>
+<div class="filters">
+<label>Track<select id="track"><option value="">All tracks</option></select></label>
+<label>Car<select id="car"><option value="">All cars</option></select></label>
+</div>
+<p id="status">Connecting to the leaderboard…</p>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>POS</th><th>DRIVER</th><th>CAR</th><th>LAP TIME</th></tr></thead>
+<tbody id="laps"><tr><td colspan="4">Loading…</td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="panel">
+<h2>About the leaderboard</h2>
+<p class="muted">Lap times are ranked fastest first for the selected track and car. Check back as your friends set new personal bests!</p>
+</section>
+</main>
+<footer>GT7 Friends Leaderboard · Unofficial fan project</footer>
+<script>
+const SUPABASE_URL = "https://ddyvleklhirbjqxjybfm.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_PFUAcUn1t5x0wE7o3vRsDQ_xOgTsZjo";
+const client = window.supabase.createClient(
+  SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY
+);
+
+let allLaps = [];
+
+function formatTime(ms) {
+  const mins = Math.floor(ms / 60000);
+  const secs = ((ms % 60000) / 1000).toFixed(3);
+  return mins + ":" + secs.padStart(6, "0");
+}
+
+function fillOptions(id, values) {
+  const el = document.getElementById(id);
+  values.forEach(item => {
+    const option = document.createElement("option");
+    option.value = String(item.id);
+    option.textContent = item.name;
+    el.appendChild(option);
+  });
+}
+
+function showLaps() {
+  const trackId = document.getElementById("track").value;
+  const carId = document.getElementById("car").value;
+  const filtered = allLaps.filter(lap =>
+    (!trackId || String(lap.track_id) === trackId) &&
+    (!carId || String(lap.car_id) === carId)
+  );
+  filtered.sort((a,b) => a.lap_time_ms - b.lap_time_ms);
+  const body = document.getElementById("laps");
+  body.replaceChildren();
+
+  if (!filtered.length) {
+    body.innerHTML = '<tr><td colspan="4">No lap times yet. Your leaderboard is ready for its first entry!</td></tr>';
+    return;
+  }
+
+  filtered.forEach((lap,index) => {
+    const row = document.createElement("tr");
+    const values = [
+      index + 1,
+      lap.drivers?.name || "Unknown driver",
+      lap.cars?.name || "Unknown car",
+      formatTime(lap.lap_time_ms)
+    ];
+    values.forEach(value => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.appendChild(cell);
+    });
+    body.appendChild(row);
+  });
+}
+
+async function loadLeaderboard() {
+  const status = document.getElementById("status");
+  try {
+    const [tracks,cars,laps] = await Promise.all([
+      client.from("tracks").select("id,name").order("name"),
+      client.from("cars").select("id,name").order("name"),
+      client.from("lap_times")
+        .select("id,driver_id,track_id,car_id,lap_time_ms,recorded_at,drivers(name),tracks(name),cars(name)")
+    ]);
+
+    if (tracks.error) throw tracks.error;
+    if (cars.error) throw cars.error;
+    if (laps.error) throw laps.error;
+
+    fillOptions("track", tracks.data);
+    fillOptions("car", cars.data);
+    allLaps = laps.data || [];
+    showLaps();
+    status.textContent = allLaps.length
+      ? allLaps.length + " lap time(s) loaded."
+      : "Connected successfully. No lap times have been added yet.";
+  } catch (error) {
+    console.error(error);
+    status.textContent = "Couldn't load the leaderboard. Check the publishable key and database permissions.";
+    document.getElementById("laps").innerHTML =
+      '<tr><td colspan="4">Leaderboard temporarily unavailable.</td></tr>';
+  }
+}
+
+document.getElementById("track").addEventListener("change", showLaps);
+document.getElementById("car").addEventListener("change", showLaps);
+
+if (SUPABASE_PUBLISHABLE_KEY === "PASTE_YOUR_PUBLISHABLE_KEY_HERE") {
+  document.getElementById("status").textContent =
+    "Website created. The database connection still needs its publishable key.";
+} else {
+  loadLeaderboard();
+}
+</script>
+</body>
+</html>
