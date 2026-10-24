@@ -6,41 +6,52 @@
 <title>GT7 Friends Leaderboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
- 
-/* Cinematic GT7 racing theme */
-html {
-  min-height: 100%;
-  background: #061126;
-}
-
+/* Final cinematic theme overrides */
 body {
-  min-height: 100vh;
-  color: #edf5ff;
-  background-color: #061126;
+  background-color: #061126 !important;
   background-image:
-    linear-gradient(rgba(3, 10, 24, 0.76), rgba(3, 10, 24, 0.88)),
-    url("racing-background.svg");
+    linear-gradient(rgba(3, 10, 24, 0.45), rgba(3, 10, 24, 0.72)),
+    url("./racing-background.svg") !important;
   background-position: center center;
   background-size: cover;
   background-attachment: fixed;
+  color: #edf5ff;
 }
 
-header, section, main, .card, .panel, form, table {
-  position: relative;
+header,
+.panel {
+  background: rgba(7, 19, 39, 0.88);
+  border-color: rgba(72, 155, 255, 0.4);
 }
 
-.card, .panel, section {
-  border-color: rgba(72, 155, 255, 0.22);
+header {
+  border-bottom: 3px solid #168bff;
+}
+
+header p,
+th {
+  color: #70bdff;
+}
+
+.admin-card {
+  background: rgba(4, 13, 28, 0.9);
+  border-color: rgba(72, 155, 255, 0.3);
 }
 
 button {
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  background: #168bff;
+  color: #ffffff;
 }
 
-button:hover {
-  border-color: #4da3ff;
+button.secondary {
+  background: #354b65;
 }
 
+input,
+select,
+textarea {
+  background: #071326;
+}
 :root{color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:#10151d;color:#f4f6f8;font-family:Arial,sans-serif}
