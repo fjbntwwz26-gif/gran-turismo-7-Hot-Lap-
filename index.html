@@ -229,7 +229,6 @@ footer {
 </header>
 
 <main>
-
 <section class="panel">
   <h2>Leaderboard</h2>
   <p class="muted">Compare your fastest laps with your friends.</p>
@@ -249,7 +248,6 @@ footer {
   </div>
 
   <p id="status" class="muted">Connecting…</p>
-
   <div style="overflow-x:auto">
     <table>
       <thead>
@@ -295,7 +293,6 @@ footer {
   <p class="muted">Add drivers, cars and circuits here. They will then appear in the lap-time form.</p>
 
   <div class="admin-grid">
-
     <div class="admin-card">
       <h3>🏎️ Add driver</h3>
       <form id="driverForm">
@@ -328,7 +325,6 @@ footer {
         <p id="trackStatus" class="muted"></p>
       </form>
     </div>
-
   </div>
 
   <hr style="border-color:rgba(112,189,255,0.3);margin:24px 0">
@@ -366,7 +362,6 @@ footer {
   </form>
 
   <h2>Existing lap times</h2>
-
   <div style="overflow-x:auto">
     <table>
       <thead>
@@ -398,14 +393,14 @@ footer {
   <h3>🏁 RACE SET UP INSTRUCTIONS 🏁</h3>
 
   <p class="muted">
-    When setting up your Quick Race in GT7:
+    When setting up your Time Trial in GT7:
   </p>
 
   <ul class="muted race-instructions">
     <li>Go to World Circuits → Asia-Oceania → Tokyo Expressway.</li>
-    <li>Select South Clockwise → Quick Race.</li>
+    <li>Select South Clockwise → Time Trial.</li>
     <li>Choose Twilight if the time-of-day setting is available.</li>
-    <li>Set Race Difficulty to Beginner.</li>
+    <li>3 Laps Maximum → Change Driver</li>
   </ul>
 
   <h3 class="fastest-lap">🔥 Record Fastest Lap 🔥</h3>
@@ -843,7 +838,6 @@ client.auth.onAuthStateChange((event, session) => {
 (async function initialise() {
   try {
     await loadData();
-
     const { data } = await client.auth.getSession();
     await checkAdmin(data.session);
   } catch (error) {
