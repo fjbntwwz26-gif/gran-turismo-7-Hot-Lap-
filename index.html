@@ -15,10 +15,10 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #061126;
+  background-color: #061126 !important;
   background-image:
     linear-gradient(rgba(3, 10, 24, 0.15), rgba(3, 10, 24, 0.35)),
-    url("./IMG_0385.jpeg");
+    url("./IMG_0385.jpeg") !important;
   background-position: center top;
   background-size: 100% auto;
   background-repeat: no-repeat;
@@ -27,7 +27,7 @@ body {
   font-family: Arial, sans-serif;
 }
 header {
-  background: rgba(7, 19, 39, 0.25);
+  background: rgba(7, 19, 39, 0.25) !important;
   padding: 24px 18px;
   border-bottom: 3px solid #168bff;
   backdrop-filter: blur(3px);
@@ -47,7 +47,7 @@ header p {
   margin-bottom: 0;
 }
 .panel {
-  background: rgba(7, 19, 39, 0.35);
+  background: rgba(7, 19, 39, 0.35) !important;
   padding: 18px;
   border: 1px solid rgba(72, 155, 255, 0.45);
   border-radius: 14px;
@@ -153,22 +153,9 @@ footer {
   color: #d0dbea;
   font-size: 12px;
 }
-/* Transparent glass-style panels */
-header {
-  background: rgba(7, 19, 39, 0.25) !important;
-}
-.panel {
-  background: rgba(7, 19, 39, 0.35) !important;
-}
-/* Keep the background visible behind the main content */
-body {
-  background-color: #061126 !important;
-  background-image:
-    linear-gradient(rgba(3, 10, 24, 0.15), rgba(3, 10, 24, 0.35)),
-    url("./IMG_0385.jpeg") !important;
-  background-position: center top;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
+hr {
+  border-color: rgba(112, 189, 255, 0.3);
+  margin: 24px 0;
 }
 @media (max-width: 600px) {
   main {
@@ -283,7 +270,7 @@ body {
       </form>
     </div>
   </div>
-  <hr style="border-color:rgba(112,189,255,0.3);margin:24px 0">
+  <hr>
   <h2 id="lapFormTitle">Add lap time</h2>
   <p class="muted">Enter the time as minutes:seconds.milliseconds, for example 1:45.250.</p>
   <form id="lapForm">
@@ -329,6 +316,7 @@ body {
 <section class="panel">
   <h2>About</h2>
   <p class="muted">An unofficial Gran Turismo 7 friends leaderboard. Lap times are ranked fastest first for the selected track and car.</p>
+  <p class="muted">Created by JSL</p>
 </section>
 </main>
 <footer>Gran Turismo Leaderboard · Unofficial fan project</footer>
